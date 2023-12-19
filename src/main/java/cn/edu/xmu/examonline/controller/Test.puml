@@ -1,0 +1,286 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+'user
+class UserController {
+    -userService:UserService
+
+    +getUserById()
+    +getUserByName()
+    +getUserList()
+    +getUserList(id)
+    +createCommonUser()
+    +createAdminUser()
+    +updateUserById()
+    +deleteUserById()
+
+    +getUserProfileById()
+    +getUserProfileList()
+    +updateUserProfileById()
+}
+
+UserController *-- UserService
+
+class UserService{
+    - userDao:UserDao
+    - userProfileDao:UserProfileDao
+    - userTypeDao:UserTypeDao
+    - paperService:PaperService
+    
+    +getUserList()
+    +getUserById()
+    +getUserByName()
+    +getUserListByType()
+    +createCommonUser()
+    +createAdminUser()
+    +updateUserById()
+    +deleteUserById()
+
+    +getUserProfileList()
+    +getUserProfileById()
+    +updateUserProfileById()
+}
+
+UserService *-- UserDao
+UserService *-- UserProfileDao
+UserService *-- PaperService
+
+class UserDao{
+    -userPoMapper:UserPoMapper
+
+    +getById()
+    +getByName()
+    +insert()
+    +deleteById()
+    +updateById()
+}
+
+UserDao *-- UserPoMapper
+
+interface UserPoMapper{
+    CRUD manipulation
+}
+
+UserPoMapper <|.. UserPoMapper_xml
+
+class UserProfileDao{
+    -userProfilePoMapper:UserProfilePoMapper
+
+    +getById()
+    +getByName()
+    +getList()
+    +insert()
+    +deleteById()
+    +updateById()
+}
+
+UserProfileDao *-- UserProfilePoMapper
+
+interface UserProfilePoMapper{
+    CRUD manipulation
+}
+
+UserProfilePoMapper <|.. UserProfilePoMapper_xml
+
+
+'paper
+class PaperController{
+    -paperService:PaperService
+
+    +getPaperById()
+    +getPaperListByUserId()
+    +getPaperListByUserIdAndName()
+    +insertPaper()
+    +deletePaperById()
+    +submitPaper()
+    +getPaperUserAnswer()
+}
+
+PaperController *-- PaperService
+
+class PaperService{
+    -paperDao:PaperDao
+    -questDao:QuestDao
+    -paperQuestDao:PaperQuestDao
+    -userDao:UserDao
+    -majorDao:MajorDao
+
+    +getPaperMajorName()
+    +getPaperListByUserId()
+    +getPaperListByUserIdAndName()
+    +getPaperById()
+    +getPaperUserById()
+    +createPaper()
+    +deletePaperById()
+    +submitPaper()
+    +getPaperUserAnswerById()
+}
+
+PaperService *-- PaperDao
+PaperService *-- QuestDao
+PaperService *-- PaperQuestDao
+PaperService *-- UserDao
+PaperService *-- MajorDao
+
+class PaperDao{
+    -paperPoMapper:PaperPoMapper
+
+    +getListByUserId()
+    +getById()
+    +getByUserIdAndName()
+    +insert()
+    +deleteById()
+    +updateById()
+}
+
+PaperDao *-- PaperPoMapper
+
+interface PaperPoMapper{
+    CRUD manipulation
+}
+
+PaperPoMapper <|.. PaperPoMapper_xml
+
+class PaperQuestDao{
+    -paperQuestPoMapper:PaperQuestPoMapper
+
+    +selectByPrimaryKey()
+    +insert()
+    +updateByPaperAndQuestId()
+    +deleteByPaperId()
+}
+
+PaperQuestDao *-- PaperQuestPoMapper
+
+interface PaperQuestPoMapper{
+    CRUD manipulation
+}
+
+PaperQuestPoMapper <|.. PaperQuestPoMapper_xml
+
+'quest
+class QuestController{
+    -questService:QuestService
+
+    +getQuestById()
+    +getQuestList()
+    +getQuestListByMajorId()
+    +getQuestListByMajorIdAndType()
+    +getQuestListByPaperId()
+    +insertQuest()
+    +updateQuestById()
+    +deleteQuestById()
+}
+
+QuestController *-- QuestService
+
+class QuestService{
+    -questDao:QuestDao
+    -majorDao:MajorDao
+    -paperDao:PaperDao
+
+    +getQuestMajorName()
+    +getQuestByMajorId()
+    +getQuestByMajorIdAndType()
+    +getQuestByPaperIdOrderByIndex()
+    +getQuestById()
+    +insertQuest()
+    +deleteQuestById()
+    +updateQuestById()
+}
+
+QuestService *-- QuestDao
+QuestService *-- MajorDao
+QuestService *-- PaperDao
+
+class QuestDao{
+    -questPoMapper:QuestPoMapper
+
+    +getList()
+    +getListByMajorId()
+    +getListByMajorIdAndType()
+    +getListByPaperIdOrderByIndex()
+    +getById()
+    +insert()
+    +deleteById()
+    +updateById()
+}
+
+QuestDao *-- QuestPoMapper
+
+interface QuestPoMapper{
+    CRUD manipulation
+}
+
+QuestPoMapper <|.. QuestPoMapper_xml
+
+'major
+class MajorController{
+    -majorService:MajorService
+
+    +getMajorById()
+    +getMajorByName()
+    +getMajorList()
+    +insertMajor()
+    +updateMajorById()
+    +deleteMajorById()
+}
+
+MajorController *-- MajorService
+
+class MajorService{
+    -majorDao:MajorDao
+
+    +getMajorByName()
+    +getMajorList()
+    +getMajorById()
+    +insertMajor()
+    +deleteMajorById()
+    +updateMajorById()
+}
+
+MajorService *-- MajorDao
+
+class MajorDao{
+    -majorPoMapper:MajorPoMapper
+
+    +getByName()
+    +getList()
+    +getById()
+    +insert()
+    +deleteById()
+    +updateById()
+}
+
+MajorDao *-- MajorPoMapper
+
+interface MajorPoMapper{
+    CRUD manipulation
+}
+
+MajorPoMapper <|.. MajorPoMapper_xml
+
+'authorization
+class AuthController{
+    -authService:AuthService
+
+    +login()
+    +logout()
+}
+
+AuthController *-- AuthService
+
+class AuthService{
+    -TOKEN_EXPIRE_SECOND:int, static
+    -tokenSet:Set<String>
+    -userDao:UserDao
+
+    +verifyToken()
+    +verifyTokenWithAdminRequired()
+    +login()
+    +logout()
+}
+
+AuthService *-- UserDao
+
+@enduml
